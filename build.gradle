@@ -1,0 +1,60 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+        classpath 'org.gradle.java:experimental-jigsaw:0.1.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+apply plugin: 'org.gradle.java.experimental-jigsaw'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+group 'com.zyxist.rost'
+version '1.0.0-SNAPSHOT'
+
+javaModule.name = 'com.zyxist.rost'
+javaModule.testModules = ['mockito.core']
+
+ext.log4jVersion = '2.6.2'
+
+sourceCompatibility = 1.9
+targetCompatibility = 1.9
+
+repositories {
+    jcenter()
+}
+
+compileTestJava {
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
+    options.compilerArgs += '-parameters'
+}
+
+junitPlatform {
+    filters {
+        engines {
+            include 'junit-jupiter'
+        }
+    }
+    logManager 'org.apache.logging.log4j.jul.LogManager'
+}
+
+
+dependencies {
+    compile('org.slf4j:slf4j-api:1.8.0-alpha2')
+
+    testCompile('org.junit.jupiter:junit-jupiter-api:5.0.0')
+    testCompile('org.mockito:mockito-core:2.10.0')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.0.0')
+    testRuntime("org.apache.logging.log4j:log4j-core:${log4jVersion}")
+    testRuntime("org.apache.logging.log4j:log4j-jul:${log4jVersion}")
+    testRuntime('org.slf4j:slf4j-api:1.8.0-alpha2')
+}
