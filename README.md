@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/zyxist/rost.svg?branch=master)](https://travis-ci.org/zyxist/rost)
+
 Rost: lifecycle made simple
 ============================
 
