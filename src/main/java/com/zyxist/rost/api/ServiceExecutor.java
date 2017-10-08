@@ -15,6 +15,7 @@
  */
 package com.zyxist.rost.api;
 
+import com.zyxist.rost.gems.Rost;
 import com.zyxist.rost.meta.ServiceDescription;
 
 import java.util.function.Supplier;
@@ -37,6 +38,9 @@ import java.util.stream.Stream;
 public interface ServiceExecutor {
 	/**
 	 * Starts all the services, executes the custom code, and then stops the services.
+	 * To provide services to start, you must create a {@link ServiceSource}. The collection of
+	 * built-in sources can be found in {@link com.zyxist.rost.sources} package, and there
+	 * are convenient factory methods for them in {@link Rost} class.
 	 *
 	 * @param serviceSource    Provides services to the executor.
 	 * @param serviceAwareCode Custom code to execute, when all the services are started.

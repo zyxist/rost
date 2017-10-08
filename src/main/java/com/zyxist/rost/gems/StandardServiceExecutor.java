@@ -28,10 +28,19 @@ import java.util.stream.Stream;
 public final class StandardServiceExecutor implements ServiceExecutor {
 	private final Consumer<ServiceFailure> errorHandler;
 
+	/**
+	 * Creates an executor that uses a basic error handler (service errors are
+	 * printed out to the console).
+	 */
 	public StandardServiceExecutor() {
 		this(new BasicErrorHandler());
 	}
 
+	/**
+	 * Creates an executor that uses a custom consumer for error handling.
+	 *
+	 * @param errorHandler Custom service error handler
+	 */
 	public StandardServiceExecutor(Consumer<ServiceFailure> errorHandler) {
 		this.errorHandler = Objects.requireNonNull(errorHandler);
 	}

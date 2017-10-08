@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * Implementation of Kahn's algorithm for topological sorting that produces the order the services
  * should be started in to satisfy their inter-dependencies. The annotations {@link ProvidesService}
- * and {@link RequiresServices} are used for constructing the graph to be sorted.
+ * and {@link RequiresServices} are used for constructing the service graph.
  */
 public final class DAGServiceComposer implements ServiceComposer {
 

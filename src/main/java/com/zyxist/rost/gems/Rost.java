@@ -27,35 +27,88 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * Entry point to Rost with factory methods for some default configurations.
+ */
 public final class Rost {
 	private Rost() {}
 
+	/**
+	 * @return A default service executor
+	 */
 	public static ServiceExecutor executor() {
 		return new StandardServiceExecutor();
 	}
 
+	/**
+	 * @return A default service composer
+	 */
 	public static ServiceComposer composer() {
 		return new DAGServiceComposer();
 	}
 
-	public static void execute(Set<ServiceLauncher> launchers, Runnable serviceAwareCode) {
+	/**
+	 * Starts the given set of services, and then executes the given piece of code.
+	 * The services are started by the standard executor, and the default composer
+	 * uses the {@link com.zyxist.rost.api.ProvidesService} and {@link com.zyxist.rost.api.RequiresServices}
+	 * annotations to compute the launching order.
+	 *
+	 * @param serviceLaunchers Service launchers to start and stop
+	 * @param serviceAwareCode Code to execute, when all services are started.
+	 */
+	public static void execute(Set<ServiceLauncher> serviceLaunchers, Runnable serviceAwareCode) {
 		ServiceExecutor executor = executor();
-		executor.execute(compose(launchers), serviceAwareCode);
+		executor.execute(compose(serviceLaunchers), serviceAwareCode);
 	}
 
-	public static Supplier<Stream<ServiceDescription>> compose(Set<ServiceLauncher> launchers) {
-		return new ComposingSource(composer(), new SimpleSource(launchers));
+	/**
+	 * Creates a service source for {@link ServiceExecutor#execute(Supplier, Runnable)} method from
+	 * the given set of service launchers. The returned service source applies a default composer
+	 * to compute the launching order, using {@link com.zyxist.rost.api.ProvidesService} and
+	 * {@link com.zyxist.rost.api.RequiresServices} annotations.
+	 *
+	 * @param serviceLaunchers Service launchers to wrap into a service source
+	 * @return Service source with a composer
+	 */
+	public static Supplier<Stream<ServiceDescription>> compose(Set<ServiceLauncher> serviceLaunchers) {
+		return new ComposingSource(composer(), new SimpleSource(serviceLaunchers));
 	}
 
-	public static Supplier<Stream<ServiceDescription>> compose(ServiceComposer composer, Set<ServiceLauncher> launchers) {
-		return new ComposingSource(composer, new SimpleSource(launchers));
+	/**
+	 * Creates a service source for {@link ServiceExecutor#execute(Supplier, Runnable)} method from
+	 * the given set of service launchers. The returned service source applies a custom service
+	 * composer to compute the launching order.
+	 *
+	 * @param composer Service composer, used for computing the launching order.
+	 * @param serviceLaunchers Service launchers to wrap into a service source
+	 * @return Service source with a composer
+	 */
+	public static Supplier<Stream<ServiceDescription>> compose(ServiceComposer composer, Set<ServiceLauncher> serviceLaunchers) {
+		return new ComposingSource(composer, new SimpleSource(serviceLaunchers));
 	}
 
-	public static Supplier<Stream<ServiceDescription>> compose(ServiceComposer composer, ServiceLauncher ... launchers) {
-		return new ComposingSource(composer, new SimpleSource(List.of(launchers)));
+	/**
+	 * Creates a service source for {@link ServiceExecutor#execute(Supplier, Runnable)} method from
+	 * the given set of service launchers. The returned service source applies a custom service
+	 * composer to compute the launching order.
+	 *
+	 * @param composer Service composer, used for computing the launching order.
+	 * @param serviceLaunchers Service launchers to wrap into a service source
+	 * @return Service source with a composer
+	 */
+	public static Supplier<Stream<ServiceDescription>> compose(ServiceComposer composer, ServiceLauncher ... serviceLaunchers) {
+		return new ComposingSource(composer, new SimpleSource(List.of(serviceLaunchers)));
 	}
 
-	public static Supplier<Stream<ServiceDescription>> services(ServiceLauncher ... launchers) {
-		return new SimpleSource(List.of(launchers));
+	/**
+	 * Creates a service source for {@link ServiceExecutor#execute(Supplier, Runnable)} method
+	 * from the given set of services. The returned service does not have a composer, so it will
+	 * not compute the launching order.
+	 *
+	 * @param serviceLaunchers Service launchers to wrap into a service source
+	 * @return Simple service source created from the given launchers, without composition
+	 */
+	public static Supplier<Stream<ServiceDescription>> services(ServiceLauncher ... serviceLaunchers) {
+		return new SimpleSource(List.of(serviceLaunchers));
 	}
 }

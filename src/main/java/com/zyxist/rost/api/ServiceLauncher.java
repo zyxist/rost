@@ -49,7 +49,7 @@ public interface ServiceLauncher {
 	 *
 	 * @throws Exception Startup error (terminates the startup of remaining services).
 	 */
-	default public void start() throws Exception {
+	default void start() throws Exception {
 	}
 
 	/**
@@ -61,6 +61,6 @@ public interface ServiceLauncher {
 	 *
 	 * @throws Exception Stop error (does not terminate the stopping of remaining services).
 	 */
-	default public void stop() throws Exception {
+	default void stop() throws Exception {
 	}
 }
