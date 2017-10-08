@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 module com.zyxist.rost {
-    requires static org.slf4j;
+	requires static org.slf4j;
 
 	exports com.zyxist.rost.api;
-    exports com.zyxist.rost.exception;
-    exports com.zyxist.rost.gems;
-    exports com.zyxist.rost.meta;
-    exports com.zyxist.rost.sources;
+	exports com.zyxist.rost.exception;
+	exports com.zyxist.rost.gems;
+	exports com.zyxist.rost.meta;
+	exports com.zyxist.rost.sources;
 }
