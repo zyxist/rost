@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 module com.zyxist.rost {
-    requires org.slf4j;
+    requires static org.slf4j;
 
 	exports com.zyxist.rost.api;
     exports com.zyxist.rost.exception;

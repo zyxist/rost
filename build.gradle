@@ -1,17 +1,17 @@
 buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
-    }
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+	}
 }
 
 plugins {
-    id 'java'
-    id 'idea'
-    id 'com.zyxist.chainsaw' version '0.1.2'
+	id 'java'
+	id 'idea'
+	id 'com.zyxist.chainsaw' version '0.1.2'
 }
 
 apply plugin: 'org.junit.platform.gradle.plugin'
@@ -23,37 +23,40 @@ javaModule.name = 'com.zyxist.rost'
 javaModule.extraTestModules = ['mockito.core']
 
 ext.log4jVersion = '2.6.2'
+ext.slf4jVersion = '1.8.0-alpha2'
+ext.junitVersion = '5.0.0'
+ext.mockitoVersion = '2.10.0'
 
 sourceCompatibility = 1.9
 targetCompatibility = 1.9
 
 repositories {
-    jcenter()
+	jcenter()
 }
 
 compileTestJava {
-    sourceCompatibility = 1.9
-    targetCompatibility = 1.9
-    options.compilerArgs += '-parameters'
+	sourceCompatibility = 1.9
+	targetCompatibility = 1.9
+	options.compilerArgs += '-parameters'
 }
 
 junitPlatform {
-    filters {
-        engines {
-            include 'junit-jupiter'
-        }
-    }
-    logManager 'org.apache.logging.log4j.jul.LogManager'
+	filters {
+		engines {
+			include 'junit-jupiter'
+		}
+	}
+	logManager 'org.apache.logging.log4j.jul.LogManager'
 }
 
 
 dependencies {
-    compile('org.slf4j:slf4j-api:1.8.0-alpha2')
+	compileOnly('org.slf4j:slf4j-api:' + slf4jVersion)
 
-    testCompile('org.junit.jupiter:junit-jupiter-api:5.0.0')
-    testCompile('org.mockito:mockito-core:2.10.0')
-    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.0.0')
-    testRuntime("org.apache.logging.log4j:log4j-core:${log4jVersion}")
-    testRuntime("org.apache.logging.log4j:log4j-jul:${log4jVersion}")
-    testRuntime('org.slf4j:slf4j-api:1.8.0-alpha2')
+	testCompile('org.junit.jupiter:junit-jupiter-api:' + junitVersion)
+	testCompile('org.mockito:mockito-core:' + mockitoVersion)
+	testCompile('org.slf4j:slf4j-api:' + slf4jVersion)
+	testRuntime('org.junit.jupiter:junit-jupiter-engine:' + junitVersion)
+	testRuntime('org.apache.logging.log4j:log4j-core:' + log4jVersion)
+	testRuntime('org.apache.logging.log4j:log4j-jul:' + log4jVersion)
 }
