@@ -23,9 +23,9 @@ javaModule.name = 'com.zyxist.rost'
 javaModule.extraTestModules = ['org.mockito']
 
 ext.log4jVersion = '2.6.2'
-ext.slf4jVersion = '1.8.0-alpha2'
+ext.slf4jVersion = '1.8.0-beta0'
 ext.junitVersion = '5.0.0'
-ext.mockitoVersion = '2.10.4'
+ext.mockitoVersion = '2.11.0'
 
 sourceCompatibility = 1.9
 targetCompatibility = 1.9
@@ -50,10 +50,8 @@ junitPlatform {
 	logManager 'org.apache.logging.log4j.jul.LogManager'
 }
 
-
 dependencies {
 	compileOnly('org.slf4j:slf4j-api:' + slf4jVersion)
-	compile('com.google.guava:guava:23.1-jre')
 
 	testCompile('org.junit.jupiter:junit-jupiter-api:' + junitVersion)
 	testCompile('org.mockito:mockito-core:' + mockitoVersion)
