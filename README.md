@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/zyxist/rost.svg?branch=master)](https://travis-ci.org/zyxist/rost)
-
 Rost: lifecycle made simple
 ============================
 
@@ -44,13 +42,11 @@ And the services start... and stop.
 Using Rost
 ----------
 
-Rost requires Java 9+, because it natively uses the new Java module system.
-
 Using with Gradle:
 
 ```
 dependencies {
-    compile group('com.zyxist.rost'), name('rost'), version: 'x.y.z'
+    testImplementation("com.zyxist.rost:rost:0.1.0-SNAPSHOT")
 }
 ```
 

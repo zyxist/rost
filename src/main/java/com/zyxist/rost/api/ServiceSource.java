@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The Rost Authors.
+ * Copyright (C) 2017, 2026 Tomasz "zyxist" Jędrzejewski
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 /**
  * Service source provides the information about the services to the {@link ServiceExecutor}.
- * The interface is just a syntactic sugar for <tt>Supplier&lt;Stream&ltServiceDescription&gt;&gt;</tt> type.
+ * The interface is just a syntactic sugar for <tt>Supplier&lt;Stream&lt;ServiceDescription&gt;&gt;</tt> type.
  */
 public interface ServiceSource extends Supplier<Stream<ServiceDescription>> {
 }

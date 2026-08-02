@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The Rost Authors.
+ * Copyright (C) 2017, 2026 Tomasz "zyxist" Jędrzejewski
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
