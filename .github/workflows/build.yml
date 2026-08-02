@@ -1,0 +1,25 @@
+name: Build project
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@7
+      - name: Set up JDK
+        uses: actions/setup-java@5
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Build with Gradle
+        run: ./gradlew build

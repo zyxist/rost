@@ -1,6 +1,8 @@
 Rost: lifecycle made simple
 ============================
 
+![build status](https://github.com/zyxist/rost/actions/workflows/build.yml/badge.svg)
+
 Rost is a simple Java library that provides a lifecycle implementation to your
 services.
 
