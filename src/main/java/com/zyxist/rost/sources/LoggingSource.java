@@ -15,59 +15,63 @@
  */
 package com.zyxist.rost.sources;
 
-import com.zyxist.rost.api.DecoratingServiceLauncher;
-import com.zyxist.rost.api.ServiceLauncher;
-import com.zyxist.rost.api.ServiceSource;
-import com.zyxist.rost.meta.ServiceDescription;
+import com.zyxist.rost.ServiceLauncherDecorator;
+import com.zyxist.rost.ServiceLauncher;
+import com.zyxist.rost.logic.metadata.ServiceDescription;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-/**
- * Decorates another service source, and provides a logging for the service launchers. The source
- * uses SLF4j as a logging backend (it must be loaded as a dependency and a module by the application).
- */
-public class LoggingSource implements ServiceSource {
-	private static final Logger LOG = LoggerFactory.getLogger(LoggingSource.class);
-	private final Supplier<Stream<ServiceDescription>> decoratedSource;
+/// Decorates the [ServiceLauncher] instances returned by another [ServiceLauncherSource]
+/// with the logging functionality using the slf4j API facade. The calls to
+/// [ServiceLauncher#start()] and [ServiceLauncher#stop()] will be logged.
+public class LoggingSource implements ServiceLauncherSource {
+	private final Logger logger;
+	private final ServiceLauncherSource decorated;
 
-	public LoggingSource(Supplier<Stream<ServiceDescription>> decoratedSource) {
-		this.decoratedSource = decoratedSource;
+	public LoggingSource(@NonNull ServiceLauncherSource decorated, @NonNull Logger logger) {
+		this.decorated = Objects.requireNonNull(decorated);
+		this.logger = Objects.requireNonNull(logger);
+	}
+
+	public LoggingSource(@NonNull ServiceLauncherSource decorated) {
+		this(decorated, LoggerFactory.getLogger(LoggingSource.class));
 	}
 
 	@Override
-	public Stream<ServiceDescription> get() {
-		return this.decoratedSource.get().map(
-			(description) -> description.decorateWith(new LoggingLauncher(description)));
+	public @NonNull Stream<ServiceDescription> provideServiceDescriptions() {
+		return this
+			.decorated
+			.provideServiceDescriptions()
+			.map(description -> description
+				.decorateWith(new LoggingLauncherDecorator(description, logger))
+			);
 	}
 
-	private static class LoggingLauncher implements DecoratingServiceLauncher {
-		private final ServiceDescription decorated;
-
-		LoggingLauncher(ServiceDescription decorated) {
-			this.decorated = Objects.requireNonNull(decorated);
-		}
-
+	private record LoggingLauncherDecorator(
+		@NonNull ServiceDescription decorated,
+		@NonNull Logger logger
+	) implements ServiceLauncherDecorator {
 		@Override
-		public ServiceLauncher getDecoratedLauncher() {
+		public @NonNull ServiceLauncher getDecoratedLauncher() {
 			return decorated.getLauncher();
 		}
 
 		@Override
 		public void start() throws Exception {
-			LOG.info("Service '"+decorated.getName()+"': starting");
+			logger.atInfo().addArgument(decorated.getName()).log("Service '{}': starting");
 			decorated.getLauncher().start();
-			LOG.info("Service '"+decorated.getName()+"': started");
+			logger.atInfo().addArgument(decorated.getName()).log("Service '{}': started");
 		}
 
 		@Override
 		public void stop() throws Exception {
-			LOG.info("Service '"+decorated.getName()+"': stopping");
+			logger.atInfo().addArgument(decorated.getName()).log("Service '{}': stopping");
 			decorated.getLauncher().start();
-			LOG.info("Service '"+decorated.getName()+"': stopped");
+			logger.atInfo().addArgument(decorated.getName()).log("Service '{}': stopped");
 		}
 	}
 }

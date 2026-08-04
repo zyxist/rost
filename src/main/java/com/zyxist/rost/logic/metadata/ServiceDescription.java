@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.meta;
+package com.zyxist.rost.logic.metadata;
 
-import com.zyxist.rost.api.*;
+import com.zyxist.rost.ServiceLauncherDecorator;
+import com.zyxist.rost.annotation.LifecycleHook;
+import com.zyxist.rost.annotation.ProvidesService;
+import com.zyxist.rost.annotation.RequiresServices;
+import com.zyxist.rost.ServiceLauncher;
 import com.zyxist.rost.exception.ServiceCompositionException;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-/**
- * Meta-information about a single service.
- */
+/// Keeps additional metadata about the given [ServiceLauncher], decoded from
+/// annotations. The instances of this class are immutable, however this does not
+/// apply to the underlying [ServiceLauncher].
 public class ServiceDescription {
 	private final ServiceLauncher launcher;
 	private final String name;
@@ -39,7 +44,7 @@ public class ServiceDescription {
 		this.name = this.discoverServiceName(this.providedService, launcher);
 	}
 
-	private ServiceDescription(ServiceDescription source, DecoratingServiceLauncher decorated) {
+	private ServiceDescription(ServiceDescription source, ServiceLauncherDecorator decorated) {
 		this.launcher = Objects.requireNonNull(decorated);
 		this.providedService = source.providedService;
 		this.requiredServices = source.requiredServices;
@@ -99,15 +104,8 @@ public class ServiceDescription {
 		return "Service '" + name + "'";
 	}
 
-	/**
-	 * Returns a new description, derived from the current one, with the replaced service
-	 * launcher. The launcher provided in the argument is expected to decorate the original
-	 * launcher - it is the programmer's responsibility to follow this recommendation.
-	 *
-	 * @param launcher The service launcher that decorates the original launcher.
-	 * @return New service description with the same meta-data, and the new launcher inside.
-	 */
-	public ServiceDescription decorateWith(DecoratingServiceLauncher launcher) {
+	/// @return Copy of this [ServiceDescription], but with the original [ServiceLauncher] replaced by a decorator.
+	public ServiceDescription decorateWith(ServiceLauncherDecorator launcher) {
 		if (launcher.getDecoratedLauncher() != this.launcher) {
 			throw new IllegalArgumentException("The launcher passed to ServiceDescription.decorateWith() does not decorate the original service launcher.");
 		}

@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.exception;
+package com.zyxist.rost.annotation;
 
-/**
- * This exception class can be used by {@link com.zyxist.rost.api.ServiceLauncher}
- * implementations to notify about issues with starting/stopping services. Its use is
- * optional, and the launchers are free to use custom exceptions.
- */
-public class ServiceException extends Exception {
-	public ServiceException() {
-	}
+import com.zyxist.rost.ServiceLauncher;
 
-	public ServiceException(String message) {
-		super(message);
-	}
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-	public ServiceException(String message, Throwable cause) {
-		super(message, cause);
-	}
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-	public ServiceException(Throwable cause) {
-		super(cause);
-	}
+/// Defines the set of services (represented by their [ServiceLauncher] implementations) that MUST
+/// start before the annotated [ServiceLauncher].
+@Retention(RUNTIME)
+@Target(TYPE)
+@Documented
+public @interface RequiresServices {
+	Class<?>[] value();
 }

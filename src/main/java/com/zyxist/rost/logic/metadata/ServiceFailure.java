@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.meta;
+package com.zyxist.rost.logic.metadata;
 
 import java.util.Objects;
 
@@ -40,7 +40,7 @@ public class ServiceFailure {
 		return exception;
 	}
 
-	public static enum StartupPhase {
+	public enum StartupPhase {
 		START, STOP;
 	}
 }

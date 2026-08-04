@@ -25,6 +25,12 @@ dependencies {
     testRuntimeOnly(libs.logback)
 }
 
+tasks.withType<Javadoc> {
+    options.encoding = "UTF-8";
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    (options as CoreJavadocOptions).addBooleanOption("Xdoclint:all,-missing", true)
+}
+
 tasks.test {
     useJUnitPlatform()
 }

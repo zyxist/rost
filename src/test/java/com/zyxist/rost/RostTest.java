@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.gems;
+package com.zyxist.rost;
 
-import com.zyxist.rost.api.ServiceComposer;
-import com.zyxist.rost.api.ServiceExecutor;
-import com.zyxist.rost.api.ServiceLauncher;
-import com.zyxist.rost.test.*;
+import com.zyxist.rost.logic.DependencyResolutionComposer;
+import com.zyxist.rost.logic.ServiceComposer;
+import com.zyxist.rost.logic.ServiceExecutor;
+import com.zyxist.rost.logic.StandardServiceExecutor;
+import com.zyxist.rost.test.BarService;
+import com.zyxist.rost.test.FooService;
+import com.zyxist.rost.test.GooService;
+import com.zyxist.rost.test.HooService;
+import com.zyxist.rost.test.JoeService;
+import com.zyxist.rost.test.ServiceOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,9 +32,13 @@ import java.util.Set;
 
 import static com.zyxist.rost.test.Duperele.stableSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-public class RostTest {
+class RostTest {
 	private Runnable runnableCode;
 	private FooService.Launcher fooService;
 	private BarService.Launcher barService;
@@ -37,12 +47,8 @@ public class RostTest {
 	private HooService.Launcher hooService;
 	private ServiceOrder order;
 
-	public RostTest() {
-	}
-
-
 	@BeforeEach
-	public void prepareMocks() {
+	void prepareMocks() {
 		runnableCode = mock(Runnable.class);
 		order = new ServiceOrder();
 		fooService = new FooService.Launcher().ordered(order);
@@ -53,14 +59,13 @@ public class RostTest {
 	}
 
 	@Test
-	public void shouldWorkInQuickstartConfiguration() {
+	void shouldWorkInQuickstartConfiguration() {
 		// Given
-		ServiceExecutor executor = Rost.executor();
-		ServiceComposer composer = Rost.composer();
+		var rost = Rost.create();
 		Set<ServiceLauncher> services = stableSet(hooService, joeService, gooService, barService, fooService);
 
 		// When
-		executor.execute(Rost.compose(composer, services), runnableCode);
+		rost.launch(services, runnableCode);
 
 		// Then
 		assertAll("Services",
@@ -77,5 +82,33 @@ public class RostTest {
 		);
 	}
 
+	@Test
+	void shouldReturnDefaultImplementationsWhenUnconfigured() {
+		// given
+		var rost = Rost.create();
 
+		// when
+		var composer = rost.getComposer();
+		var executor = rost.getExecutor();
+
+		// then
+		assertInstanceOf(DependencyResolutionComposer.class, composer);
+		assertInstanceOf(StandardServiceExecutor.class, executor);
+	}
+
+	@Test
+	void shouldAllowReplacingDefaultImplementations() {
+		// given
+		ServiceComposer customComposer = mock(ServiceComposer.class);
+		ServiceExecutor customExecutor = mock(ServiceExecutor.class);
+
+		// when
+		var rost = Rost.create()
+			.withComposer(customComposer)
+			.withExecutor(customExecutor);
+
+		// then
+		assertSame(customComposer, rost.getComposer());
+		assertSame(customExecutor, rost.getExecutor());
+	}
 }

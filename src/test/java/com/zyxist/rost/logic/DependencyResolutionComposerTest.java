@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.gems;
+package com.zyxist.rost.logic;
 
-import com.zyxist.rost.api.ServiceComposer;
-import com.zyxist.rost.meta.ServiceDescription;
+import com.zyxist.rost.logic.metadata.ServiceDescription;
 import com.zyxist.rost.test.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import java.util.Set;
 import static com.zyxist.rost.test.Duperele.stableSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DAGComposerTest {
+public class DependencyResolutionComposerTest {
 	private ServiceComposer composer;
 	private ServiceDescription fooService;
 	private ServiceDescription barService;
@@ -39,7 +38,7 @@ public class DAGComposerTest {
 
 	@BeforeEach
 	public void prepare() {
-		composer = new DAGServiceComposer();
+		composer = new DependencyResolutionComposer();
 		fooService = new ServiceDescription(new FooService.Launcher());
 		barService = new ServiceDescription(new BarService.Launcher());
 		barService2 = new ServiceDescription(new BarService.AlternativeLauncher());

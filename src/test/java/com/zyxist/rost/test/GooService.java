@@ -15,7 +15,7 @@
  */
 package com.zyxist.rost.test;
 
-import com.zyxist.rost.api.ProvidesService;
+import com.zyxist.rost.annotation.ProvidesService;
 
 import java.util.function.Supplier;
 

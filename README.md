@@ -1,10 +1,17 @@
-Rost: lifecycle made simple
+Rost: simple lifecycle management to your Java apps
 ============================
 
 ![build status](https://github.com/zyxist/rost/actions/workflows/build.yml/badge.svg)
 
-Rost is a simple Java library that provides a lifecycle implementation to your
-services.
+Library for lifecycle management:
+
+ - Start your services in order before executing the actual application code
+ - Stop the services in the reverse order
+ - Resolve dependencies between services to determine the startup order.
+
+The library does not have any third-party dependencies, except for **JSpecify**
+annotations for nullability. Its primary use case are standalone applications that
+do not use any large framework, but need some form of lifecycle management.
 
 *Note: the library is a work-in-progress; the stable version has not been released
 yet.*
@@ -36,13 +43,13 @@ Set<ServiceLauncher> launchers = Set.of(
     new BarLauncher(),
     new JoeLauncher()
 );
-Rost.execute(launchers, () -> System.out.println("System started"));
+Rost.create().launch(launchers, () -> System.out.println("App started"));
 ```
 
 And the services start... and stop.
 
-Using Rost
-----------
+Installation
+------------
 
 Using with Gradle:
 
@@ -63,66 +70,29 @@ module com.example.mymodule {
 By default, the project has no external dependencies. If you, however, use [SLF4j](http://slf4j.org),
 Rost provides `LoggingSource` that adds logging information about started and stopped services.
 
-Advanced configuration
-----------------------
+Usage
+-----
 
-Let's get back to the quick-start example. Rost provides a convenient API that wraps
-a couple of the most common use cases and helps get you start. If the defaults do
-not suit you, you can compose everything on your own.
+A service can be *any* class that you need to initialize before the first use, and that you *might*
+want to stop at the end. To add the lifecycle, implement the corresponding `ServiceLauncher` class
+(you can also implement it directly on the service class) and annotate it with the following annotations:
 
-The code below shows the same quick-start example in the verbose form:
+ - `@ProvidesService(MyService.class)` - specifies, what service this launcher handles
+ - `@RequiresServices(ServiceA.class, ServiceB.class)` - declares dependencies that need to start earlier.
 
-```java
-Set<ServiceLauncher> launchers = Set.of(
-    new FooLauncher(),
-    new BarLauncher(),
-    new JoeLauncher()
-);
+The execution of services follows the contract below:
 
-ServiceExecutor executor = new StandardServiceExecutor();
-ServiceComposer composer = Rost.composer();
-Rost.execute(
-    new ComposingSource(composer, new SimpleSource(launchers)),
-    () -> System.out.println("System started")
-);
-```
+ - Each service that successfully starts, **MUST** stop.
+ - Services shall start in the provided order.
+ - Services shall stop in the reverse order.
+ - After starting all services, run the `serviceAwareCode`
+ - Do not attempt to stop a service that failed to start.
+ - Exceptions thrown from [ServiceLauncher#stop()] **MUST NOT** prevent other services from stopping.
 
-Some concepts:
-
- * *executor* - responsible for calling `start()` and `stop()`
- * *composer* - puts the services in the proper order, defined by annotations,
- * *service source* - provides the services to the executor. The sources can be decorated
-    to provide additional behaviors (e.g. logging). You can also see that the composer
-    itself is attached as a decorator, too!
-    
-Using with Dependency Injection containers
-------------------------------------------
-
-Rost can be easily used with Dependency Injection containers. All the popular containers
-(most notably Dagger and Guice) support some sort of a *multibindings* feature, where you
-can register multiple implementations of a single interface.
-
-Register your implementations of `ServiceLauncher` interface in the DI container, inject
-the result set somewhere and simply pass it to Rost:
-
-```java
-public class Bootstrap {
-    private final Set<ServiceLauncher> services;
-    private final ServiceExecutor executor;
-	
-    @Inject
-    public Bootstrap(Set<ServiceLauncher> services, ServiceExecutor executor) {
-        this.services = Objects.requireNonNull(services);
-        this.executor = Objects.requireNonNull(executor);
-    }
-	
-    public void runApplication() {
-        executor.execute(Rost.compose(services), () -> {
-            // some custom code
-        });
-    }
-}
-```
+Optionally, you can also create a `ServiceLauncher` annotated with `@LifecycleHook` instead of
+`@ProvidesService`. Lifecycle hooks are just additional actions that you need to execute during
+the startup process. They do not manage any particular service, so nothing can depend on them,
+but they *may* depend on other services.
 
 Authors and license
 -------------------

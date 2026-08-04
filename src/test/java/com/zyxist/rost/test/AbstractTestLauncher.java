@@ -15,7 +15,7 @@
  */
 package com.zyxist.rost.test;
 
-import com.zyxist.rost.api.ServiceLauncher;
+import com.zyxist.rost.ServiceLauncher;
 
 import java.util.function.Supplier;
 

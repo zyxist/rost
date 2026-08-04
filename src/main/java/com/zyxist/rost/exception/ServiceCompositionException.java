@@ -17,11 +17,7 @@ package com.zyxist.rost.exception;
 
 import java.util.Objects;
 
-/**
- * Notifies about issues with service composition process, such as missing
- * information. These issues shall be fixed by the programmer in order to
- * run the application.
- */
+/// Informs about errors in the service composition process.
 public class ServiceCompositionException extends IllegalArgumentException {
 	private final Class<?> serviceLauncherClass;
 

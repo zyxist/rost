@@ -13,46 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.gems;
+package com.zyxist.rost.logic;
 
-import com.zyxist.rost.api.ServiceExecutor;
-import com.zyxist.rost.meta.ServiceDescription;
-import com.zyxist.rost.meta.ServiceFailure;
-import com.zyxist.rost.utils.BasicErrorHandler;
+import com.zyxist.rost.logic.metadata.ServiceDescription;
+import com.zyxist.rost.logic.metadata.ServiceFailure;
+import com.zyxist.rost.internal.BasicErrorHandler;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public final class StandardServiceExecutor implements ServiceExecutor {
 	private final Consumer<ServiceFailure> errorHandler;
 
-	/**
-	 * Creates an executor that uses a basic error handler (service errors are
-	 * printed out to the console).
-	 */
+	/// Creates a standard service executor with the basic error handler.
 	public StandardServiceExecutor() {
 		this(new BasicErrorHandler());
 	}
 
-	/**
-	 * Creates an executor that uses a custom consumer for error handling.
-	 *
-	 * @param errorHandler Custom service error handler
-	 */
+	/// Creates a standard service executor with a custom error handler.
+	///
+	/// @param errorHandler Custom error handler
 	public StandardServiceExecutor(Consumer<ServiceFailure> errorHandler) {
 		this.errorHandler = Objects.requireNonNull(errorHandler);
 	}
 
 	@Override
-	public void execute(Supplier<Stream<ServiceDescription>> serviceSource, Runnable serviceAwareCode) {
+	public void execute(List<ServiceDescription> services, Runnable serviceAwareCode) {
 		List<ServiceDescription> orderedServices = new ArrayList<>();
 		List<ServiceDescription> reverseOrderedServices = new ArrayList<>();
-		serviceSource.get().forEachOrdered(svc -> {
-			orderedServices.add(svc);
-			reverseOrderedServices.add(0, svc);
-		});
+		for (var service: services) {
+			orderedServices.add(service);
+			reverseOrderedServices.addFirst(service);
+		}
 		Set<ServiceDescription> correctlyStarted = new HashSet<>();
 		try {
 			if (startServices(orderedServices, correctlyStarted)) {

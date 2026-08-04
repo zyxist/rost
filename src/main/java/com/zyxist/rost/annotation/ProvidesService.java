@@ -13,22 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.api;
+package com.zyxist.rost.annotation;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import com.zyxist.rost.ServiceLauncher;
 
 import static java.lang.annotation.ElementType.TYPE;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * Used for resolving the dependencies between the startable services ({@link ServiceLauncher})
- * to ensure they start in correct order. The annotation shall be put on a class that implements
- * some service. Specifies the interfaces of services (as defined by {@link ProvidesService} annotation)
- * that shall be started BEFORE this service.
- */
+import java.lang.annotation.Target;
+
+/// Defines the type of the service that the given [ServiceLauncher] initializes. You can later use
+/// this type in [RequiresServices] to declare a dependency on this service launcher.
+///
+/// Annotations [LifecycleHook] and [ProvidesService] cannot both appear on the same [ServiceLauncher],
+/// but exactly one of them must be present.
+///
+/// @see LifecycleHook
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface RequiresServices {
-	Class<?>[] value();
+@Documented
+public @interface ProvidesService {
+	/**
+	 * @return Service interface, whose lifecycle is managed.
+	 */
+	Class<?> value();
 }

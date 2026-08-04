@@ -15,6 +15,7 @@
  */
 package com.zyxist.rost.utils;
 
+import com.zyxist.rost.internal.Multimap;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;

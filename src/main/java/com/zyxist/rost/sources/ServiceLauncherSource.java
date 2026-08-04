@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.api;
+package com.zyxist.rost.sources;
 
-/**
- * Represents a service launcher that decorates another service launcher.
- */
-public interface DecoratingServiceLauncher extends ServiceLauncher {
-	ServiceLauncher getDecoratedLauncher();
+import com.zyxist.rost.logic.metadata.ServiceDescription;
+import org.jspecify.annotations.NonNull;
+
+import java.util.stream.Stream;
+
+/// Provides information about [com.zyxist.rost.ServiceLauncher] instances to execute,
+/// associated with additional metadata represented by [ServiceDescription]. The instances
+/// of [ServiceLauncherSource] may be decorators to add extra functionality, such as logging.
+public interface ServiceLauncherSource {
+    @NonNull Stream<ServiceDescription> provideServiceDescriptions();
 }

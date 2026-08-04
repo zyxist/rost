@@ -15,8 +15,8 @@
  */
 package com.zyxist.rost.test;
 
-import com.zyxist.rost.api.LifecycleHook;
-import com.zyxist.rost.api.RequiresServices;
+import com.zyxist.rost.annotation.LifecycleHook;
+import com.zyxist.rost.annotation.RequiresServices;
 
 import java.util.function.Supplier;
 

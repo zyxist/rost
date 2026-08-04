@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.gems;
+package com.zyxist.rost.logic;
 
-import com.zyxist.rost.api.ProvidesService;
-import com.zyxist.rost.api.RequiresServices;
-import com.zyxist.rost.api.ServiceComposer;
-import com.zyxist.rost.meta.ServiceDescription;
-import com.zyxist.rost.utils.Multimap;
+import com.zyxist.rost.annotation.ProvidesService;
+import com.zyxist.rost.annotation.RequiresServices;
+import com.zyxist.rost.logic.metadata.ServiceDescription;
+import com.zyxist.rost.internal.Multimap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-/**
- * Implementation of Kahn's algorithm for topological sorting that produces the order the services
- * should be started in to satisfy their inter-dependencies. The annotations {@link ProvidesService}
- * and {@link RequiresServices} are used for constructing the service graph.
- */
-public final class DAGServiceComposer implements ServiceComposer {
+/// Resolves the dependencies between services using the Kahn's algorithm
+/// for topological sorting. The algorithm uses the information from [ProvidesService]
+/// and [RequiresServices] information to build a dependency graph and then
+/// sort the services against their dependencies.
+public final class DependencyResolutionComposer implements ServiceComposer {
 
 	@Override
 	public List<ServiceDescription> compose(Set<ServiceDescription> unorderedServices) {
@@ -44,7 +47,7 @@ public final class DAGServiceComposer implements ServiceComposer {
 			);
 		}
 		if (!servicesReachableFrom.isEmpty()) {
-			throw new RuntimeException("Cycle detected in services!");
+			throw new IllegalArgumentException("Cycle detected in services!");
 		}
 		return output;
 	}
@@ -62,10 +65,9 @@ public final class DAGServiceComposer implements ServiceComposer {
 
 	private Deque<ServiceDescription> findRoots(Set<ServiceDescription> unorderedServices) {
 		Deque<ServiceDescription> output = new LinkedList<>();
-		main:
 		for (ServiceDescription svc : unorderedServices) {
 			if (svc.hasRequiredServices()) {
-				continue main;
+				continue;
 			}
 			output.add(svc);
 		}

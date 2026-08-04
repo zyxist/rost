@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.api;
+package com.zyxist.rost;
 
-import com.zyxist.rost.meta.ServiceDescription;
+import org.jspecify.annotations.NonNull;
 
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-/**
- * Service source provides the information about the services to the {@link ServiceExecutor}.
- * The interface is just a syntactic sugar for <tt>Supplier&lt;Stream&lt;ServiceDescription&gt;&gt;</tt> type.
- */
-public interface ServiceSource extends Supplier<Stream<ServiceDescription>> {
+/// Allows decorating the existing [ServiceLauncher] with extra functionality.
+public interface ServiceLauncherDecorator extends ServiceLauncher {
+	@NonNull ServiceLauncher getDecoratedLauncher();
 }

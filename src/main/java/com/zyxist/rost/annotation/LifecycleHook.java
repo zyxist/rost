@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.api;
+package com.zyxist.rost.annotation;
 
+import com.zyxist.rost.ServiceLauncher;
+
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * Marks service launchers that do not manage lifecycle of any particular service,
- * but simply perform additional actions. Such action can use {@link RequiresServices}
- * annotation, but no other service can depend on it.
- *
- * <p>The annotations {@link LifecycleHook} and {@link ProvidesService} cannot be
- * used together.</p>
- *
- * @see ProvidesService
- */
+/// Marks [ServiceLauncher] implementations that do not actually manage the lifecycle
+/// of any particular service, but simply perform additional action in the startup/stopping
+/// process.
+///
+/// Such [ServiceLauncher] can have [RequiresServices] annotation, that is: it can depend
+/// on other services, but no other service can depend on it.
+///
+/// Annotations [LifecycleHook] and [ProvidesService] cannot both appear on the same [ServiceLauncher],
+/// but exactly one of them must be present.
+///
+/// @see ProvidesService
 @Retention(RUNTIME)
 @Target(TYPE)
+@Documented
 public @interface LifecycleHook {
 }

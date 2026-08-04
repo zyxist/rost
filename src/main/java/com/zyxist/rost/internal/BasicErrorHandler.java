@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.api;
+package com.zyxist.rost.internal;
 
-import com.zyxist.rost.meta.ServiceDescription;
+import com.zyxist.rost.logic.metadata.ServiceFailure;
 
-import java.util.List;
-import java.util.Set;
+import java.util.function.Consumer;
 
-/**
- * The service composer is responsible for determining the proper startup order for all the services,
- * that satisfies all the dependencies. The dependencies between services are defined by {@link RequiresServices}
- * and {@link ProvidesService} annotations.
- *
- * <p>The service composer is launched by {@link com.zyxist.rost.sources.ComposingSource} service source.</p>
- */
-public interface ServiceComposer {
-	List<ServiceDescription> compose(Set<ServiceDescription> unorderedServices);
+public class BasicErrorHandler implements Consumer<ServiceFailure> {
+	@Override
+	public void accept(ServiceFailure serviceFailure) {
+		System.err.println("The service '" + serviceFailure.getService().getName() + "' failed during " + serviceFailure.getPhase() + " phase.");
+		serviceFailure.getException().printStackTrace();
+	}
 }
