@@ -15,9 +15,26 @@
  */
 package com.zyxist.rost;
 
+import com.zyxist.rost.logic.metadata.ServiceDescription;
 import org.jspecify.annotations.NonNull;
 
-/// Allows decorating the existing [ServiceLauncher] with extra functionality.
+import java.util.Objects;
+
+/// Allows decorating the existing [ServiceLauncher] with extra functionality. Extend
+/// [ServiceLauncherDecorator.Abstract] to reduce some boilerplate code.
 public interface ServiceLauncherDecorator extends ServiceLauncher {
 	@NonNull ServiceLauncher getDecoratedLauncher();
+
+	abstract class Abstract implements ServiceLauncherDecorator {
+		protected final ServiceDescription decorated;
+
+		public Abstract(@NonNull ServiceDescription decorated) {
+			this.decorated = Objects.requireNonNull(decorated);
+		}
+
+		@Override
+		public @NonNull ServiceLauncher getDecoratedLauncher() {
+			return decorated.getLauncher();
+		}
+	}
 }

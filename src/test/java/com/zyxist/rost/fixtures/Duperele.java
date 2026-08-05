@@ -13,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.test;
+package com.zyxist.rost.fixtures;
 
-import com.zyxist.rost.annotation.ProvidesService;
-import com.zyxist.rost.annotation.RequiresServices;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import java.util.function.Supplier;
-
-public interface HooService {
-	@RequiresServices({GooService.class, FooService.class})
-	@ProvidesService(HooService.class)
-	class Launcher extends AbstractTestLauncher<Launcher> {
-		private boolean started = false;
-		private boolean stopped = false;
-
-		public Launcher() {
-			super(null, null);
+public class Duperele {
+	public static <T> Set<T> stableSet(T ... items) {
+		Set<T> stableSet = new LinkedHashSet<>();
+		for (T it: items) {
+			stableSet.add(it);
 		}
-
-		public Launcher(Supplier<Exception> onStartErr, Supplier<Exception> onStopErr) {
-			super(onStartErr, onStopErr);
-		}
+		return stableSet;
 	}
 }

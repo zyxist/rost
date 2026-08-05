@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.test;
+package com.zyxist.rost.fixtures;
 
-import com.zyxist.rost.annotation.LifecycleHook;
+import com.zyxist.rost.annotation.ProvidesService;
 import com.zyxist.rost.annotation.RequiresServices;
 
 import java.util.function.Supplier;
 
-@RequiresServices({GooService.class, FooService.class})
-@LifecycleHook
-public class KooHook extends AbstractTestLauncher<KooHook> {
-	private boolean started = false;
-	private boolean stopped = false;
+public interface HooService {
+	@RequiresServices({GooService.class, FooService.class})
+	@ProvidesService(HooService.class)
+	class Launcher extends AbstractTestLauncher<Launcher> {
+		private boolean started = false;
+		private boolean stopped = false;
 
-	public KooHook() {
-		super(null, null);
-	}
+		public Launcher() {
+			super(null, null);
+		}
 
-	public KooHook(Supplier<Exception> onStartErr, Supplier<Exception> onStopErr) {
-		super(onStartErr, onStopErr);
+		public Launcher(Supplier<Exception> onStartErr, Supplier<Exception> onStopErr) {
+			super(onStartErr, onStopErr);
+		}
 	}
 }

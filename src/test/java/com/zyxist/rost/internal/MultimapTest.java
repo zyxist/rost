@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.utils;
+package com.zyxist.rost.internal;
 
-import com.zyxist.rost.internal.Multimap;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;

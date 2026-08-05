@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 /// Provides information about [com.zyxist.rost.ServiceLauncher] instances to execute,
 /// associated with additional metadata represented by [ServiceDescription]. The instances
 /// of [ServiceLauncherSource] may be decorators to add extra functionality, such as logging.
+@FunctionalInterface
 public interface ServiceLauncherSource {
     @NonNull Stream<ServiceDescription> provideServiceDescriptions();
 }

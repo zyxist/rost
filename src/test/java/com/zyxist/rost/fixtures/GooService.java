@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.test;
+package com.zyxist.rost.fixtures;
 
 import com.zyxist.rost.annotation.ProvidesService;
-import com.zyxist.rost.annotation.RequiresServices;
 
 import java.util.function.Supplier;
 
-public interface JoeService {
-	@RequiresServices({FooService.class})
-	@ProvidesService(JoeService.class)
+public interface GooService {
+	@ProvidesService(GooService.class)
 	class Launcher extends AbstractTestLauncher<Launcher> {
 		private boolean started = false;
 		private boolean stopped = false;

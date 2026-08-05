@@ -22,12 +22,12 @@ dependencies {
     testImplementation(libs.mockito)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.launcher)
-    testRuntimeOnly(libs.logback)
+    testImplementation(libs.logback)
 }
 
 tasks.withType<Javadoc> {
     options.encoding = "UTF-8";
-    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.memberLevel = JavadocMemberLevel.PROTECTED
     (options as CoreJavadocOptions).addBooleanOption("Xdoclint:all,-missing", true)
 }
 

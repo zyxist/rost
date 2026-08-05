@@ -15,14 +15,13 @@
  */
 package com.zyxist.rost.logic.metadata;
 
+import com.zyxist.rost.ServiceLauncher;
 import com.zyxist.rost.ServiceLauncherDecorator;
 import com.zyxist.rost.annotation.LifecycleHook;
 import com.zyxist.rost.annotation.ProvidesService;
 import com.zyxist.rost.annotation.RequiresServices;
-import com.zyxist.rost.ServiceLauncher;
 import com.zyxist.rost.exception.ServiceCompositionException;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;

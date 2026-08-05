@@ -21,12 +21,14 @@ import com.zyxist.rost.logic.DependencyResolutionComposer;
 import com.zyxist.rost.logic.ServiceComposer;
 import com.zyxist.rost.logic.ServiceExecutor;
 import com.zyxist.rost.logic.StandardServiceExecutor;
-import com.zyxist.rost.logic.metadata.ServiceDescription;
 import com.zyxist.rost.sources.ServiceLauncherSource;
+import com.zyxist.rost.sources.ServiceLauncherSourceDecorator;
 import com.zyxist.rost.sources.SimpleSource;
 import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,23 +49,29 @@ import java.util.stream.Collectors;
 public final class Rost {
 	private final ServiceExecutor executor;
 	private final ServiceComposer composer;
+	private final List<ServiceLauncherSourceDecorator> decorators;
 
-	private Rost(@NonNull ServiceComposer composer, @NonNull ServiceExecutor executor) {
+	private Rost(
+		@NonNull ServiceComposer composer,
+		@NonNull ServiceExecutor executor,
+		@NonNull List<ServiceLauncherSourceDecorator> decorators
+	) {
 		this.composer = Objects.requireNonNull(composer);
 		this.executor = Objects.requireNonNull(executor);
+		this.decorators = List.copyOf(Objects.requireNonNull(decorators));
 	}
 
 	public static Rost create() {
-		return new Rost(new DependencyResolutionComposer(), new StandardServiceExecutor());
+		return new Rost(new DependencyResolutionComposer(), new StandardServiceExecutor(), List.of());
 	}
 
 	/// Creates a new immutable instance of [Rost] with the specified [ServiceComposer] implementation,
 	/// responsible for determining the launch order.
 	///
 	/// @param composer Composer implementation to use
-	/// @return New instance of [Rost]
+	/// @return New immutable instance of [Rost]
 	public Rost withComposer(@NonNull ServiceComposer composer) {
-		return new Rost(Objects.requireNonNull(composer), this.executor);
+		return new Rost(Objects.requireNonNull(composer), this.executor, this.decorators);
 	}
 
 	/// Creates a new immutable instance of [Rost] with the specified [ServiceExecutor] implementation,
@@ -72,7 +80,19 @@ public final class Rost {
 	/// @param executor Executor implementation to use
 	/// @return New instance of [Rost]
 	public Rost withExecutor(@NonNull ServiceExecutor executor) {
-		return new Rost(this.composer, Objects.requireNonNull(executor));
+		return new Rost(this.composer, Objects.requireNonNull(executor), this.decorators);
+	}
+
+	/// Adds the new [ServiceLauncherSourceDecorator] that will decorate any [ServiceLauncherSource]
+	/// passed to [#launch(ServiceLauncherSource, Runnable)].
+	///
+	/// @param decorator New decorator for service sources.
+	/// @return New immutable instance of [Rost]
+	public Rost withDecorator(@NonNull ServiceLauncherSourceDecorator decorator) {
+		List<ServiceLauncherSourceDecorator> copy = new ArrayList<>(decorators.size() + 1);
+		copy.addAll(decorators);
+		copy.add(Objects.requireNonNull(decorator));
+		return new Rost(this.composer, this.executor, copy);
 	}
 
 	public @NonNull ServiceComposer getComposer() {
@@ -98,11 +118,19 @@ public final class Rost {
 		Objects.requireNonNull(serviceAwareCode);
 		executor.execute(
 			composer.compose(
-				source
+				decorateSource(source)
 					.provideServiceDescriptions()
-					.collect(Collectors.toCollection(() -> new LinkedHashSet<>()))
+					.collect(Collectors.toCollection(LinkedHashSet::new))
 			),
 			serviceAwareCode
 		);
+	}
+
+	private ServiceLauncherSource decorateSource(ServiceLauncherSource original) {
+		var current = original;
+		for (var decorator: decorators) {
+			current = decorator.decorate(current);
+		}
+		return current;
 	}
 }

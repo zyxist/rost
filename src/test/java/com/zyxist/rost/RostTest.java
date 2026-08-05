@@ -15,22 +15,23 @@
  */
 package com.zyxist.rost;
 
+import com.zyxist.rost.fixtures.BarService;
+import com.zyxist.rost.fixtures.ExampleSourceDecorator;
+import com.zyxist.rost.fixtures.FooService;
+import com.zyxist.rost.fixtures.GooService;
+import com.zyxist.rost.fixtures.HooService;
+import com.zyxist.rost.fixtures.JoeService;
+import com.zyxist.rost.fixtures.ServiceOrder;
 import com.zyxist.rost.logic.DependencyResolutionComposer;
 import com.zyxist.rost.logic.ServiceComposer;
 import com.zyxist.rost.logic.ServiceExecutor;
 import com.zyxist.rost.logic.StandardServiceExecutor;
-import com.zyxist.rost.test.BarService;
-import com.zyxist.rost.test.FooService;
-import com.zyxist.rost.test.GooService;
-import com.zyxist.rost.test.HooService;
-import com.zyxist.rost.test.JoeService;
-import com.zyxist.rost.test.ServiceOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static com.zyxist.rost.test.Duperele.stableSet;
+import static com.zyxist.rost.fixtures.Duperele.stableSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -94,6 +95,25 @@ class RostTest {
 		// then
 		assertInstanceOf(DependencyResolutionComposer.class, composer);
 		assertInstanceOf(StandardServiceExecutor.class, executor);
+	}
+
+	@Test
+	void shouldDecorateServiceLauncherSources() {
+		// given
+		var decorator = new ExampleSourceDecorator();
+		var rost = Rost.create().withDecorator(decorator);
+		Set<ServiceLauncher> services = stableSet(barService, fooService);
+
+		// when
+		rost.launch(services, runnableCode);
+
+		// then
+		assertAll(
+			() -> decorator.assertStarted(fooService),
+			() -> decorator.assertStopped(barService),
+			() -> decorator.assertStarted(fooService),
+			() -> decorator.assertStopped(barService)
+		);
 	}
 
 	@Test

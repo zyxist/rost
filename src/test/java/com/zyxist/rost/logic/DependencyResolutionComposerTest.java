@@ -16,14 +16,14 @@
 package com.zyxist.rost.logic;
 
 import com.zyxist.rost.logic.metadata.ServiceDescription;
-import com.zyxist.rost.test.*;
+import com.zyxist.rost.fixtures.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
 
-import static com.zyxist.rost.test.Duperele.stableSet;
+import static com.zyxist.rost.fixtures.Duperele.stableSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DependencyResolutionComposerTest {
