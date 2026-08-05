@@ -123,7 +123,7 @@ void main() {
     Consumer<ServiceFailure> errorHandler = createCustomErrorHandler();
     
     Rost.create()
-        .withExecutor(new StandardServiceExecutor(errorHandler))
+        .withExecutor(ServiceExecutor.withErrorHandler(errorHandler))
         .launch(launchers, () -> System.out.println("App started"));
 }
 ```
@@ -205,6 +205,65 @@ public class MyServiceLauncherDecorator extends ServiceLauncherDecorator.Abstrac
 
 void main() {
    Rost.create().withDecorator(new MySourceDecorator());
+}
+```
+
+### Multiple implementations of a service
+
+Rost can seamlessly handle the scenario, where there are multiple implementations of the given service interface,
+and we want to use only one of them. Responsibilities:
+
+* **Selecting the service implementation**: on the dependency injection container or custom code,
+* **Launching the chosen service implementation**: on Rost.
+
+To make it possible, refer to your service in `@ProvidesService` and `@RequiresService` annotations through the interface,
+not any of the implementation classes. In this way, Rost will be able to correctly resolve dependencies between service
+without depending on any particular implementation.
+
+> [!IMPORTANT]
+> Each service implementation **may** have its own `ServiceLauncher`. Moreover, different implementations **may**
+> have different dependencies in their `@RequiresService` annotations.
+
+Example:
+
+```java
+public interface MyService {
+    // your custom interface for the service functionality
+}
+
+public class MyServiceImplA implements MyService {
+    @ProvidesService(MyService.class)
+    @RequiresServices(DependencyA.class)
+    public static class Launcher implements ServiceLauncher {
+        // code here...
+    }
+}
+
+public class MyServiceImplB implements MyService {
+   @ProvidesService(MyService.class)
+   @RequiresServices(DependencyA.class, DependencyB.class)
+   public static class Launcher implements ServiceLauncher {
+      // code here...
+   }
+}
+
+public class AnotherService {
+   @ProvidesService(AnotherService.class)
+   @RequiresServices(MyService.class) // any implementation will be OK
+   public static class Launcher implements ServiceLauncher {
+      // code here...
+   }
+}
+
+void main() {
+    var services = Set.of(
+        new DependencyA.Launcher(),
+        new DependencyA.Launcher(),
+        selectMyServiceImplementation(),
+        new AnotherService.Launcher()
+    );
+    
+    Rost.create().launch(services, () -> applicationLogic());
 }
 ```
 
