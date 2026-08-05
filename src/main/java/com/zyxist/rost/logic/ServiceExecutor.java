@@ -16,9 +16,13 @@
 package com.zyxist.rost.logic;
 
 import com.zyxist.rost.ServiceLauncher;
+import com.zyxist.rost.internal.BasicErrorHandler;
+import com.zyxist.rost.logic.impl.StandardServiceExecutor;
 import com.zyxist.rost.logic.metadata.ServiceDescription;
+import com.zyxist.rost.logic.metadata.ServiceFailure;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /// Executes the [ServiceLauncher] instances. The implementations shall follow the rules below:
 ///
@@ -34,4 +38,15 @@ public interface ServiceExecutor {
 	/// @param services List of services in the startup order
 	/// @param serviceAwareCode The custom code block to execute, when all services start successfully.
 	void execute(List<ServiceDescription> services, Runnable serviceAwareCode);
+
+	/// @return Default service executor with the default error handler
+	static ServiceExecutor defaultExecutor() {
+		return withErrorHandler(new BasicErrorHandler());
+	}
+
+	/// @param errorHandler Code for handling errors thrown from [ServiceLauncher].
+	/// @return Default service executor with the provided error handler
+	static ServiceExecutor withErrorHandler(Consumer<ServiceFailure> errorHandler) {
+		return new StandardServiceExecutor(errorHandler);
+	}
 }

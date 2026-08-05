@@ -17,6 +17,7 @@ package com.zyxist.rost.logic;
 
 import com.zyxist.rost.annotation.ProvidesService;
 import com.zyxist.rost.annotation.RequiresServices;
+import com.zyxist.rost.logic.impl.DependencyResolutionComposer;
 import com.zyxist.rost.logic.metadata.ServiceDescription;
 
 import java.util.List;
@@ -26,4 +27,9 @@ import java.util.Set;
 /// and [RequiresServices] annotations. Custom services may also include additional constraints.
 public interface ServiceComposer {
 	List<ServiceDescription> compose(Set<ServiceDescription> unorderedServices);
+
+	/// @return Default implementation of the service composer.
+	static ServiceComposer defaultComposer() {
+		return new DependencyResolutionComposer();
+	}
 }

@@ -15,8 +15,14 @@
  */
 package com.zyxist.rost.logic;
 
+import com.zyxist.rost.fixtures.BarService;
+import com.zyxist.rost.fixtures.FooService;
+import com.zyxist.rost.fixtures.GooService;
+import com.zyxist.rost.fixtures.JoeService;
+import com.zyxist.rost.fixtures.KooHook;
+import com.zyxist.rost.fixtures.MooService;
+import com.zyxist.rost.logic.impl.DependencyResolutionComposer;
 import com.zyxist.rost.logic.metadata.ServiceDescription;
-import com.zyxist.rost.fixtures.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

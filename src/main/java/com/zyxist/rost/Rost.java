@@ -17,10 +17,8 @@ package com.zyxist.rost;
 
 import com.zyxist.rost.annotation.ProvidesService;
 import com.zyxist.rost.annotation.RequiresServices;
-import com.zyxist.rost.logic.DependencyResolutionComposer;
 import com.zyxist.rost.logic.ServiceComposer;
 import com.zyxist.rost.logic.ServiceExecutor;
-import com.zyxist.rost.logic.StandardServiceExecutor;
 import com.zyxist.rost.sources.ServiceLauncherSource;
 import com.zyxist.rost.sources.ServiceLauncherSourceDecorator;
 import com.zyxist.rost.sources.SimpleSource;
@@ -62,7 +60,7 @@ public final class Rost {
 	}
 
 	public static Rost create() {
-		return new Rost(new DependencyResolutionComposer(), new StandardServiceExecutor(), List.of());
+		return new Rost(ServiceComposer.defaultComposer(), ServiceExecutor.defaultExecutor(), List.of());
 	}
 
 	/// Creates a new immutable instance of [Rost] with the specified [ServiceComposer] implementation,

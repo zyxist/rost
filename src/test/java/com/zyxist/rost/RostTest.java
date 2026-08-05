@@ -22,17 +22,21 @@ import com.zyxist.rost.fixtures.GooService;
 import com.zyxist.rost.fixtures.HooService;
 import com.zyxist.rost.fixtures.JoeService;
 import com.zyxist.rost.fixtures.ServiceOrder;
-import com.zyxist.rost.logic.DependencyResolutionComposer;
 import com.zyxist.rost.logic.ServiceComposer;
 import com.zyxist.rost.logic.ServiceExecutor;
-import com.zyxist.rost.logic.StandardServiceExecutor;
+import com.zyxist.rost.logic.impl.DependencyResolutionComposer;
+import com.zyxist.rost.logic.impl.StandardServiceExecutor;
+import com.zyxist.rost.logic.metadata.ServiceFailure;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static com.zyxist.rost.fixtures.Duperele.stableSet;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
@@ -130,5 +134,24 @@ class RostTest {
 		// then
 		assertSame(customComposer, rost.getComposer());
 		assertSame(customExecutor, rost.getExecutor());
+	}
+
+	@Test
+	void shouldUseCustomErrorHandlerWithoutRevealingImplementationDetails() {
+		// given
+		var errors = new ArrayList<ServiceFailure>();
+		Consumer<ServiceFailure> customErrorHandler = errors::add;
+		var rost = Rost.create().withExecutor(ServiceExecutor.withErrorHandler(customErrorHandler));
+		var service = new FooService.Launcher(
+			() -> new RuntimeException("Start failure"),
+			() -> new RuntimeException("Stop failure")
+		);
+
+		// when
+		rost.launch(Set.of(service), () -> { });
+
+		// then
+		assertEquals(1, errors.size());
+		assertEquals("Start failure", errors.getFirst().getException().getMessage());
 	}
 }

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.logic;
+package com.zyxist.rost.logic.impl;
 
 import com.zyxist.rost.annotation.ProvidesService;
 import com.zyxist.rost.annotation.RequiresServices;
-import com.zyxist.rost.logic.metadata.ServiceDescription;
 import com.zyxist.rost.internal.Multimap;
+import com.zyxist.rost.logic.ServiceComposer;
+import com.zyxist.rost.logic.metadata.ServiceDescription;
 
 import java.util.ArrayList;
 import java.util.Deque;

@@ -13,26 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.zyxist.rost.logic;
+package com.zyxist.rost.logic.impl;
 
+import com.zyxist.rost.logic.ServiceExecutor;
 import com.zyxist.rost.logic.metadata.ServiceDescription;
 import com.zyxist.rost.logic.metadata.ServiceFailure;
-import com.zyxist.rost.internal.BasicErrorHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public final class StandardServiceExecutor implements ServiceExecutor {
 	private final Consumer<ServiceFailure> errorHandler;
 
-	/// Creates a standard service executor with the basic error handler.
-	public StandardServiceExecutor() {
-		this(new BasicErrorHandler());
-	}
-
-	/// Creates a standard service executor with a custom error handler.
-	///
-	/// @param errorHandler Custom error handler
 	public StandardServiceExecutor(Consumer<ServiceFailure> errorHandler) {
 		this.errorHandler = Objects.requireNonNull(errorHandler);
 	}
