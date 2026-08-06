@@ -36,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: sbom
-          path: ${{ env.PRODUCT_PATH }}/build/reports/cyclonedx/bom.json
+          path: ${{ env.PRODUCT_PATH }}build/reports/cyclonedx/bom.json
