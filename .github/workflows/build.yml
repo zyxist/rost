@@ -29,3 +29,11 @@ jobs:
       - name: Build Javadoc
         run: ./gradlew javadoc
 
+      - name: Build SBOM
+        run: ./gradlew cyclonedxBom
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: ${{ env.PRODUCT_PATH }}/build/reports/cyclonedx/bom.json
